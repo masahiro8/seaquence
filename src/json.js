@@ -30,7 +30,7 @@ const steps = [
     }
   },
   {
-    step_id: 1104,
+    step_id: 1004,
     title: "step4",
     time: {
       start: 21,
@@ -83,8 +83,30 @@ const assets = [
 const assets_schedule = [
   {
     schedule_id: 1,
-    title: "asset1",
+    title: "image",
     step_id: 1001,
+    asset_id: 3,
+    asset_type: ASSETS_TYPE.IMAGE,
+    time: {
+      start: 0,
+      end: 5
+    }
+  },
+  {
+    schedule_id: 2,
+    title: "sound",
+    step_id: 1001,
+    asset_id: 1,
+    asset_type: ASSETS_TYPE.SOUND,
+    time: {
+      start: 3,
+      end: 5
+    }
+  },
+  {
+    schedule_id: 3,
+    title: "anim",
+    step_id: 1002,
     asset_id: 4,
     asset_type: ASSETS_TYPE.ANIM,
     loop: 3,
@@ -94,14 +116,24 @@ const assets_schedule = [
     }
   },
   {
-    schedule_id: 2,
-    title: "asset2",
-    step_id: 1002,
-    asset_id: 4,
-    asset_type: ASSETS_TYPE.ANIM,
-    loop: 3,
+    schedule_id: 4,
+    title: "movie",
+    step_id: 1003,
+    asset_id: 2,
+    asset_type: ASSETS_TYPE.MOVIE,
     time: {
-      start: 0,
+      start: 1,
+      end: 4
+    }
+  },
+  {
+    schedule_id: 5,
+    title: "text",
+    step_id: 1004,
+    asset_id: 5,
+    asset_type: ASSETS_TYPE.TEXT,
+    time: {
+      start: 1,
       end: 5
     }
   }

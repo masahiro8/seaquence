@@ -7,6 +7,7 @@ import { AssetManager } from "./components/asset/assetManager";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+
     //元のデータ
     this.project = project;
   }

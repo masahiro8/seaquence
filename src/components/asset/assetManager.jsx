@@ -37,16 +37,6 @@ export class AssetManager extends React.Component {
       return schedule;
     });
 
-    Fps.setCallback(_fps => {
-      //現在のFPS fpsの変化でアニメーションのフレーム数を変更する
-      // console.log("fps =  ", _fps);
-    });
-
-    console.log("this.assets_schedule ", this.assets_schedule);
-
-    //TODO::ここでassetIntervalにthis.assets_scheduleを丸投げするのがダメ
-    //TODO::this.asset_scheduleは保持しておいて、statusだけを取り出すようにするべき
-
     this.assets_schedule.map(schedule => {
       schedule.status.update(status => {
         schedule.player.update(status);

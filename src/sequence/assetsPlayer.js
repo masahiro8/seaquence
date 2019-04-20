@@ -1,7 +1,5 @@
 import * as _ from "lodash";
 import { ASSETS_TYPE } from "../model/assets";
-import { FRAME_RATE } from "../util/constants";
-import { project } from "../json";
 import { Fps } from "../sequence/fps";
 
 const getTime = function() {
@@ -14,16 +12,18 @@ const getTime = function() {
  */
 const animationPlayer = asset => {
   let isPlaying = false;
-  let fps = 60; //基本fps
 
   let startTime = 0; //開始時間
   let elaspedTime = 0; //経過時間
 
-  let alltime = 0; //アニメーション時間
-  let afps = 0; //アニメーション総フレーム数
-  let msecPerFrame = 0; //アニメーション１コマあたりのミリ秒
-
-  let time = { start: 0, end: 0 }; //アニメーション内のFPS取得用
+  //アニメーション時間
+  let alltime = 0;
+  //アニメーション総フレーム数
+  let animationFrames = 0;
+  //アニメーション１コマあたりのミリ秒
+  let msecPerFrame = 0;
+  //アニメーション内のFPS取得用
+  let time = { start: 0, end: 0 };
 
   const emit = schedule => {
     if (!isPlaying) return;
@@ -37,7 +37,7 @@ const animationPlayer = asset => {
     const pframe = Math.floor(nloop * asset.files.length * msecPerFrame);
     //ファイルのindex
     const index = Math.floor((elaspedTime - pframe) / msecPerFrame);
-    console.log("nloop", elaspedTime, nloop, pframe, index);
+    console.log("asset.files=", asset.files[index]);
     time.start = getTime();
   };
 
@@ -45,25 +45,20 @@ const animationPlayer = asset => {
     isPlaying = true;
     startTime = getTime();
 
-    alltime = (schedule.time.end - schedule.time.start) * 1000; //アニメーション時間
-    afps = asset.files.length * schedule.loop; //アニメーション総フレーム数
-    msecPerFrame = alltime / afps;
-
-    console.log(
-      "---",
-      schedule.loop,
-      asset.files.length,
-      afps,
-      alltime,
-      msecPerFrame
-    );
+    //アニメーション時間
+    alltime = (schedule.time.end - schedule.time.start) * 1000;
+    //アニメーション総フレーム数
+    animationFrames = asset.files.length * schedule.loop;
+    //アニメーション１コマあたりのミリ秒
+    msecPerFrame = alltime / animationFrames;
 
     //asset_type===animの場合はフレームレートを作成
     //fps計測
     if (asset.type === ASSETS_TYPE.ANIM) {
       Fps.setCallback(_fps => {
-        fps = _fps;
-        emit(schedule);
+        if (isPlaying) {
+          emit(schedule);
+        }
       });
     }
   };
@@ -78,23 +73,50 @@ const animationPlayer = asset => {
   };
 };
 
+const filePlayer = asset => {
+  const play = schedule => {
+    console.log("start ", asset.files[0]);
+  };
+  const stop = schedule => {
+    console.log("stop ", asset.files[0]);
+  };
+  return {
+    play,
+    stop
+  };
+};
+const imagePlayer = filePlayer;
+const soundPlayer = filePlayer;
+const moviePlayer = filePlayer;
+const textPlayer = filePlayer;
+
+const getPlayer = asset => {
+  if (asset.type === ASSETS_TYPE.ANIM) {
+    return animationPlayer(_.cloneDeep(asset));
+  } else if (asset.type == ASSETS_TYPE.IMAGE) {
+    return imagePlayer(_.cloneDeep(asset));
+  } else if (asset.type == ASSETS_TYPE.SOUND) {
+    return soundPlayer(_.cloneDeep(asset));
+  } else if (asset.type == ASSETS_TYPE.MOVIE) {
+    return moviePlayer(_.cloneDeep(asset));
+  } else if (asset.type == ASSETS_TYPE.TEXT) {
+    return textPlayer(_.cloneDeep(asset));
+  }
+};
+
 /**
  * アセットの再生と停止を制御
  * @param {} asset
  */
 export const assetsPlayer = (asset, schedule) => {
   let prevStatus = false;
-  let player = animationPlayer(_.cloneDeep(asset));
+  let player = getPlayer(asset);
   let isPlaying = false;
 
   // console.log("schedule = ", asset, schedule);
 
   //再生開始
   const playAsset = () => {
-    //assetを検索して紐付け
-
-    //パラパラアニメーション再生
-    //アセットと紐付け
     player.play(_.cloneDeep(schedule));
   };
 
